@@ -78,8 +78,56 @@ namespace Szamologep
         private void Button_Click(object sender, RoutedEventArgs e)
         {
             Button clickedButton = (Button)sender;
-            string felirat = clickedButton.Content.ToString();
-            txtblock_kijelzo.Text += felirat;
+            string buttonContent = clickedButton.Content.ToString();
+
+            bool isOperator;
+            bool isDigit;
+            bool isEqual;
+            bool isClear;
+            
+            isOperator = buttonContent == "+" || buttonContent == "-" || buttonContent == "*" || buttonContent == "/";
+            isEqual = buttonContent == "=";
+            isClear = buttonContent == "C";
+            isDigit = char.IsDigit(buttonContent[0]);
+
+            string inputDigit = String.Empty;
+            string part2 = String.Empty;
+
+            int firstToEquation;
+
+            if (isDigit)
+            {
+                if (inputDigit != String.Empty)
+                {
+                    part2 += buttonContent;
+                    txtblock_kijelzo.Text += inputDigit;
+                }
+                else
+                {
+                    inputDigit += buttonContent;
+                    txtblock_kijelzo.Text += inputDigit;
+                }
+             
+            }
+            else if (isOperator)
+            {
+                if (txtblock_kijelzo.Text.Length > 0 && !"+-*/".Contains(txtblock_kijelzo.Text[txtblock_kijelzo.Text.Length - 1]))
+                {
+                    return;
+                }
+                txtblock_kijelzo.Text += buttonContent;
+                firstToEquation = Convert.ToInt32(inputDigit);
+                inputDigit = String.Empty;
+            }
+            else if (isEqual)
+            {
+
+            }
+            else if (isClear)
+            {
+                txtblock_kijelzo.Text = String.Empty;
+            }
+            
         }        
     }
 }
