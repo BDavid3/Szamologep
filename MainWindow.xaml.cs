@@ -1,21 +1,13 @@
-﻿using System.Text;
-using System.Windows;
+﻿using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
 using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
+using NCalc;
 
 namespace Szamologep
 {
-    /// <summary>
-    /// Interaction logic for MainWindow.xaml
-    /// </summary>
     public partial class MainWindow : Window
     {
+        private string rawEquation = String.Empty;
         public MainWindow()
         {
             InitializeComponent();
@@ -77,57 +69,35 @@ namespace Szamologep
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            Button clickedButton = (Button)sender;
-            string buttonContent = clickedButton.Content.ToString();
+            Button pressedButton = (Button)sender;
+            string textOfButton = pressedButton.Content.ToString();
 
-            bool isOperator;
-            bool isDigit;
-            bool isEqual;
-            bool isClear;
-            
-            isOperator = buttonContent == "+" || buttonContent == "-" || buttonContent == "*" || buttonContent == "/";
-            isEqual = buttonContent == "=";
-            isClear = buttonContent == "C";
-            isDigit = char.IsDigit(buttonContent[0]);
-
-            string inputDigit = String.Empty;
-            string part2 = String.Empty;
-
-            int firstToEquation;
-
-            if (isDigit)
+            if (textOfButton != "C" && textOfButton != "=")
             {
-                if (inputDigit != String.Empty)
+                rawEquation += textOfButton;
+                txtblock_kijelzo.Text = rawEquation;
+            }
+
+            else if (textOfButton == "=")
+            {
+                char lastChar = rawEquation[rawEquation.Length - 1];
+                bool isLastCharOperator = "+-*/".Contains(lastChar);
+
+                if (rawEquation.Length > 0 && !isLastCharOperator)
                 {
-                    part2 += buttonContent;
-                    txtblock_kijelzo.Text += inputDigit;
+                    NCalc.Expression expression = new NCalc.Expression(rawEquation);
+                    int output = Convert.ToInt32(expression.Evaluate());
+                    txtblock_kijelzo.Text = output.ToString();
+                    rawEquation = output.ToString();
                 }
-                else
-                {
-                    inputDigit += buttonContent;
-                    txtblock_kijelzo.Text += inputDigit;
-                }
-             
             }
-            else if (isOperator)
+            else
             {
-                if (txtblock_kijelzo.Text.Length > 0 && !"+-*/".Contains(txtblock_kijelzo.Text[txtblock_kijelzo.Text.Length - 1]))
-                {
-                    return;
-                }
-                txtblock_kijelzo.Text += buttonContent;
-                firstToEquation = Convert.ToInt32(inputDigit);
-                inputDigit = String.Empty;
+                rawEquation = String.Empty;
+                txtblock_kijelzo.Text = rawEquation;
             }
-            else if (isEqual)
-            {
-
-            }
-            else if (isClear)
-            {
-                txtblock_kijelzo.Text = String.Empty;
-            }
-            
-        }        
+        }
+      
     }
+
 }
